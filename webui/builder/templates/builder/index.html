@@ -1,0 +1,306 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mi Repositorio a la Medida</title>
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 18px; }
+    fieldset { border: 1px solid #ccc; border-radius: 10px; padding: 14px; margin-bottom: 18px; }
+    legend { padding: 0 8px; }
+    label { display:block; margin: 8px 0 4px; font-weight: 600; }
+    input, select, textarea { width: 100%; padding: 7px; box-sizing: border-box; border: 1px solid #bbb; border-radius: 6px; }
+    textarea { min-height: 90px; resize: vertical; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .row { display:flex; gap:10px; align-items:end; }
+    .row > * { flex: 1; }
+    .btn { padding: 10px 12px; border: 1px solid #333; background:#f5f5f5; border-radius: 8px; cursor:pointer; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-primary { background: #003366; color: white; border-color: #003366; }
+    .btn-danger { background: #fff0f0; border-color: #cc0000; color: #cc0000; }
+    .small { font-size: 12px; color:#666; margin-top: 4px; }
+    .json-editor-subbox { margin-top: 12px; padding: 12px; border: 1px solid #ccc; border-radius: 10px; background: #f8f8f8; }
+    .json-editor-subbox legend { font-size: 14px; font-weight: bold; padding: 0 6px; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .table th, .table td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    .table th { background: #f3f3f3; text-align: left; }
+    .headerbar{
+      width: 100%;
+      padding: 18px;
+      margin-bottom: 18px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #003366, #0055a5);
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+    .headerbar h1{ margin:0; font-size: 26px; letter-spacing: 1px; }
+    .headerbar p{ margin:6px 0 0; font-size: 13px; opacity:.9; }
+    .hint { font-size: 12px; color:#444; margin: 6px 0 0; }
+  </style>
+</head>
+
+<body>
+
+  <div class="headerbar">
+    <h1>📁 Mi Repositorio a la Medida</h1>
+    <p>Generación automática de documentos desde formularios estructurados</p>
+  </div>
+
+  <!-- =========================================================
+       SECCIÓN: GENERAR WORD (MISMA LÓGICA DE ANTES)
+       - Mantiene: template .docx + mapping configs + output + JSON (hidden)
+       - Cambia: en vez de subir JSON, lo construimos desde el formulario del contrato
+  ========================================================== -->
+
+<!-- ========= SECCIÓN GENERAR WORD (mantiene tu pipeline) ========= -->
+<fieldset>
+  <legend><strong>Generar Contrato Word</strong></legend>
+
+  <form id="word_form" method="post" action="{% url 'run_word' %}" onsubmit="return prepareWordJson();">
+    {% csrf_token %}
+
+    <div class="grid-2">
+      <div>
+        <label>Plantilla Word (.docx):</label>
+        <select name="word_base" id="word_base" required>
+          {% for t in word_templates %}
+            <option value="{{ t.value }}">{{ t.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label>Mapping (configs):</label>
+        <select name="mapping_json" id="mapping_json" required>
+          {% for m in mapping_templates  %}
+            <option value="{{ m.value }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:10px;">
+      <div>
+        <label>Carpeta salida Word:</label>
+        <input type="text" name="output_dir" id="word_output_dir" required>
+      </div>
+      <div>
+        <label>Nombre archivo Word:</label>
+        <input type="text" name="output_name" id="word_output_name" placeholder="Contrato_1492.docx" required>
+      </div>
+    </div>
+
+    <!-- ESTE ES EL MISMO CAMPO QUE TU VIEW YA CONSUME -->
+    <input type="hidden" name="json_text" id="word_json_text_hidden" />
+
+    <!-- ========= FORMULARIO CONTRATO (campos como en el Word) ========= -->
+    <fieldset class="json-editor-subbox">
+      <legend>Datos del contrato</legend>
+
+      <div class="grid-2">
+        <div>
+          <label>Número contrato ( [Num_Cont] ):</label>
+          <input type="text" id="f_Num_Cont" placeholder="1492">
+        </div>
+
+        <div>
+          <label>Fecha ( [Fecha] ):</label>
+          <input type="date" id="f_Fecha">
+        </div>
+
+        <div>
+          <label>Cliente ( [Cliente_Nom] ):</label>
+          <input type="text" id="f_Cliente_Nom" placeholder="Valentina Vallejo">
+        </div>
+
+        <div>
+          <label>ID ( [Cliente_ID] ):</label>
+          <input type="text" id="f_Cliente_ID" placeholder="1000556639">
+        </div>
+
+        <div>
+          <label>Teléfono 1 ( [Cliente_Tel1] ):</label>
+          <input type="text" id="f_Cliente_Tel1" placeholder="300xxxxxxx">
+        </div>
+
+        <div>
+          <label>Teléfono 2 ( [Cliente_Tel2] ):</label>
+          <input type="text" id="f_Cliente_Tel2" placeholder="Opcional">
+        </div>
+
+        <div>
+          <label>Dirección ( [Cliente_Dir] ):</label>
+          <input type="text" id="f_Cliente_Dir" placeholder="Cra 11D #120-10">
+        </div>
+
+        <div>
+          <label>Vendedor ( [Vendedor] ):</label>
+          <input type="text" id="f_Vendedor" placeholder="(si aplica)">
+        </div>
+
+        <div>
+          <label>Prueba ( [Prueba] ):</label>
+          <input type="date" id="f_Prueba">
+        </div>
+
+        <div>
+          <label>Entrega ( [Entrega] ):</label>
+          <input type="date" id="f_Entrega">
+        </div>
+      </div>
+
+      <fieldset class="json-editor-subbox" style="margin-top:12px;">
+        <legend>Productos / Ítems (tabla Word: [Productos])</legend>
+
+        <button type="button" class="btn" id="add_prod_btn">Añadir ítem</button>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:90px;">Ítem ( [Item] )</th>
+              <th>Referencia ( [Descripcion] )</th>
+              <th style="width:180px;">Valor ( [Valor] )</th>
+              <th style="width:60px;"></th>
+            </tr>
+          </thead>
+          <tbody id="productos_body"></tbody>
+        </table>
+        
+        <div class="grid-2" style="margin-top:12px;">
+          <div>
+            <label style="margin-bottom:4px;">Notion – Vestido (page_id) (opcional):</label>
+            <input type="text" id="f_VestidoPageId" placeholder="178ab952-dadf-80ee-b62a-c07c8717c3b9">
+            <div class="hint">Solo si quieres crear relación en Notion.</div>
+          </div>
+
+          <div>
+            <label style="margin-bottom:4px;">Notion – Vendedores (page_id, separados por coma) (opcional):</label>
+            <input type="text" id="f_VendedoresPageIds" placeholder="id1,id2">
+            <div class="hint">Ej: c6e41bb4-... , 1a2b3c-...</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:10px;">
+          <div></div>
+          <div>
+            <label>Total ( [V_Total] ):</label>
+            <input type="text" id="f_V_Total" placeholder="7000000">
+          </div>
+        </div>
+      </fieldset>
+
+    </fieldset>
+
+    <div style="margin-top:12px;">
+      <button type="submit" class="btn btn-primary">Generar Word</button>
+    </div>
+  </form>
+</fieldset>
+
+<script>
+  function prepareWordJson() {
+    try {
+      const payload = buildContratoJson();
+      const hidden = document.getElementById("word_json_text_hidden");
+      hidden.value = JSON.stringify(payload, null, 2);
+
+      // DEBUG rápido (puedes quitarlo luego)
+      console.log("JSON_TEXT length:", hidden.value.length);
+      return true; // permite que el submit continúe
+    } catch (e) {
+      alert("Error construyendo JSON: " + e);
+      return false; // bloquea submit si hay error
+    }
+  }
+
+  function addRow(tbodyId, cells) {
+    const tbody = document.getElementById(tbodyId);
+    const tr = document.createElement("tr");
+    cells.forEach(td => tr.appendChild(td));
+
+    const tdDel = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn btn-danger";
+    btn.textContent = "✕";
+    btn.addEventListener("click", () => tr.remove());
+    tdDel.appendChild(btn);
+    tr.appendChild(tdDel);
+
+    tbody.appendChild(tr);
+  }
+
+  function makeInputCell(type, placeholder, className) {
+    const td = document.createElement("td");
+    const input = document.createElement("input");
+    input.type = type;
+    input.placeholder = placeholder || "";
+    input.className = className || "";
+    td.appendChild(input);
+    return td;
+  }
+
+  document.getElementById("add_prod_btn").addEventListener("click", () => {
+    addRow("productos_body", [
+      makeInputCell("text", "1", "p_item"),
+      makeInputCell("text", "Traje de novia...", "p_desc"),
+      makeInputCell("text", "7000000", "p_val"),
+    ]);
+  });
+
+  function v(id) {
+    const el = document.getElementById(id);
+    return el ? (el.value || "").trim() : "";
+  }
+
+  function parseIds(csv) {
+    return (csv || "")
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+
+  function buildContratoJson() {
+    const productos = [];
+    document.querySelectorAll("#productos_body tr").forEach(tr => {
+      const inputs = tr.querySelectorAll("td input");
+      if (!inputs || inputs.length < 3) return;
+
+      const Item = (inputs[0].value || "").trim();
+      const Descripcion = (inputs[1].value || "").trim();
+      const Valor = (inputs[2].value || "").trim();
+
+      if (Item || Descripcion || Valor) productos.push({ Item, Descripcion, Valor });
+    });
+
+    return {
+      Contrato: {
+        Num_Cont: v("f_Num_Cont"),
+        Cliente_Nom: v("f_Cliente_Nom"),
+        Cliente_ID: v("f_Cliente_ID"),
+        Cliente_Tel1: v("f_Cliente_Tel1"),
+        Cliente_Tel2: v("f_Cliente_Tel2"),
+        Cliente_Dir: v("f_Cliente_Dir"),
+        Fecha: v("f_Fecha"),
+        Prueba: v("f_Prueba"),
+        Entrega: v("f_Entrega"),
+        Vendedor: v("f_Vendedor"),
+        V_Total: v("f_V_Total"),
+        Productos: productos,
+
+        // 👇 SOLO Notion (no afecta Word)
+        Vestido: v("f_VestidoPageId"),
+        Vendedores: parseIds(v("f_VendedoresPageIds"))
+      }
+    };
+  }
+
+</script>
+
+
+</body>
+</html>

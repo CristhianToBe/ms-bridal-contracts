@@ -1,0 +1,49 @@
+# === Archivos de Python ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+
+# === Virtualenv ===
+.venv/
+.env/
+.env.bak/
+*.env
+
+# === Configuración de IDE ===
+.vscode/
+.idea/
+
+# === Archivos temporales ===
+*.log
+*.tmp
+*.temp
+
+# === Archivos de sistema ===
+.DS_Store
+Thumbs.db
+
+# === Archivos de pruebas ===
+*.coverage
+.coverage.*
+.pytest_cache/
+.cache/
+
+# === Archivos de empaquetado ===
+*.egg-info/
+dist/
+build/
+
+# === Carpeta de descargas o pruebas ===
+salidas/
+plantillas/
+*.bat
+.deps_installed
+
+# Django media / uploads (archivos temporales)
+webui/uploads/
+webui/uploads/*
+
+# claves locales
+notion/keys.py

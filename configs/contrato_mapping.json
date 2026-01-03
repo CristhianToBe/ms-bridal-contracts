@@ -1,0 +1,18 @@
+{
+  "Tipo de documento": "word",
+  "mapeo": {
+    "[Num_Cont]": "Contrato||Num_Cont",
+    "[Cliente_Nom]": "Contrato||Cliente_Nom",
+    "[Cliente_ID]": "Contrato||Cliente_ID",
+    "[Cliente_Tel1]": "Contrato||Cliente_Tel1",
+    "[Cliente_Tel2]": "Contrato||Cliente_Tel2",
+    "[Cliente_Dir]": "Contrato||Cliente_Dir",
+    "[Fecha]": "Contrato||Fecha",
+    "[Prueba]": "Contrato||Prueba",
+    "[Entrega]": "Contrato||Entrega",
+    "[Vendedor]": "Contrato||Vendedor",
+    "[V_Total]": "Contrato||V_Total",
+
+    "[Productos]": "Contrato||Productos"
+  }
+}
