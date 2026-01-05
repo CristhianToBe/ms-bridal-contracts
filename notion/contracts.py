@@ -76,12 +76,11 @@ def _as_relation(value) -> dict:
 
 def build_properties_from_payload(payload: dict) -> dict:
     props = {}
-
+    print(payload)
     for notion_name, spec in NOTION_CONTRACT_FIELDS.items():
         ptype = spec["type"]
         path = spec["path"]
         value = get_value_from_path(payload, path)
-
         if ptype == "title":
             props[notion_name] = _as_title(value)
         elif ptype == "rich_text":
@@ -98,9 +97,8 @@ def build_properties_from_payload(payload: dict) -> dict:
             props[notion_name] = _as_relation(value)
         else:
             raise NotionError(f"Tipo no soportado: {ptype}")
-        
     print (props)
-
+        
     return props
 
 def create_contract_row(payload: dict) -> dict:

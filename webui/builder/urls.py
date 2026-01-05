@@ -1,4 +1,5 @@
 from django.urls import path
+from .views import refresh_catalogs
 from . import views
 
 urlpatterns = [
@@ -9,4 +10,5 @@ urlpatterns = [
     path("create-json/", views.create_json_view, name="create_json"),
     path("get-json-template/", views.get_json_template_view, name="get_json_template"),
     path("create-mapping/", views.create_mapping_view, name="create_mapping"), 
+    path("refresh-catalogs/", refresh_catalogs, name="refresh_catalogs"),
 ]

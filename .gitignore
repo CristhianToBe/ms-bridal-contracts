@@ -40,6 +40,9 @@ salidas/
 plantillas/
 *.bat
 .deps_installed
+webui/cache/
+*.sqlite3
+*.db
 
 # Django media / uploads (archivos temporales)
 webui/uploads/

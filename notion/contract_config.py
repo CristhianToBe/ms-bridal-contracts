@@ -17,6 +17,6 @@ NOTION_CONTRACT_FIELDS = {
     "Estatus":            {"type": "select",       "path": "Contrato||Estatus"},
 
     # Relations (requieren page_id(s), no texto)
-    "Vestido":            {"type": "relation",     "path": "Contrato||Vestido"},
+    "Vestido":            {"type": "relation",     "path": "Contrato||Vestido_PageId"},
     "Vendedores":         {"type": "relation",     "path": "Contrato||Vendedores"},
 }
