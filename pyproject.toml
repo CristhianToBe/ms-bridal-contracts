@@ -1,0 +1,11 @@
+[project]
+name = "ms_bridal"
+version = "0.1.0"
+description = "Refactorizado del proyecto ms-bridal-contracts"
+authors = ["CristhianToBe and contributors"]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+ms-bridal-cli = "ms_bridal.cli:main"

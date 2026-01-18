@@ -19,19 +19,15 @@ from notion.client import NotionError
 from .sync import sync_dresses_from_export, sync_clients_from_contracts_export
 from cache.cache_db import list_dresses, list_clients  # <- si NO la tienes, bórrala y quita vestidos/clientes del context
 
+WEBUI_BASE = Path(settings.BASE_DIR)
+REPO_ROOT = WEBUI_BASE.parent
+SRC_DIR = REPO_ROOT / "src"
 
-# 👉 AÑADIMOS LA RAÍZ DEL REPO AL PYTHONPATH
-# settings.BASE_DIR = carpeta "webui" (donde está manage.py)
-WEBUI_BASE = Path(settings.BASE_DIR)          # ...\dossier-builder\webui
-REPO_ROOT = WEBUI_BASE.parent                 # ...\dossier-builder
-
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 # Scripts
-from word.script_word import run_word
-from excel.script_excel import run_excel
-
+from ms_bridal.documents.word.renderer import run_word
+from ms_bridal.documents.excel.exporter import run_excel
 
 def save_uploaded_file(file):
     path = default_storage.save(file.name, ContentFile(file.read()))
